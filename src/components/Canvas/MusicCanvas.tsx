@@ -3,12 +3,14 @@ import { Stage, Layer } from 'react-konva'
 import type Konva from 'konva'
 import { useCanvasStore } from '../../store/canvas-store'
 import { useLibraryStore } from '../../store/library-store'
+import { usePinchZoom } from '../../hooks/usePinchZoom'
 import { CanvasBlock } from './CanvasBlock'
 
 export function MusicCanvas() {
   const stageRef = useRef<Konva.Stage>(null)
   const { placedBlocks, viewport, soloId, moveBlock, toggleMute, toggleSolo, setViewport } = useCanvasStore()
   const { getBlockById } = useLibraryStore()
+  const { handleTouchMove, handleTouchEnd } = usePinchZoom(stageRef)
 
   const handleWheel = useCallback((e: Konva.KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault()
@@ -82,6 +84,8 @@ export function MusicCanvas() {
         y={viewport.y}
         draggable
         onWheel={handleWheel}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         onDragEnd={(e) => {
           if (e.target === stageRef.current) {
             setViewport({
