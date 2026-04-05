@@ -1,0 +1,64 @@
+.transport-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: #1a1a2e;
+  border-bottom: 2px solid #333;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  z-index: 100;
+}
+
+.transport-play-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #4ECDC4;
+  background: transparent;
+  color: #4ECDC4;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.transport-play-btn:hover {
+  background: #4ECDC422;
+}
+
+.transport-bpm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.transport-bpm-label {
+  color: #888;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.transport-bpm-slider {
+  width: 120px;
+  accent-color: #4ECDC4;
+}
+
+.transport-bpm-value {
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  min-width: 32px;
+}
+
+.transport-title {
+  margin-left: auto;
+  color: #555;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
