@@ -92,6 +92,31 @@ describe('libraryStore', () => {
     expect(results).toHaveLength(1)
   })
 
+  it('finds compatible blocks sorted by score', () => {
+    const ref = {
+      id: '1', name: 'Ref', category: 'melody' as const,
+      pattern: '', key: 'C', bpm: 120, bars: 1,
+      mood: { energy: 0.5, brightness: 0.5 }, density: 0.5,
+      tags: [], source: 'preset' as const, createdAt: new Date(),
+    }
+    const compat = {
+      id: '2', name: 'Compatible', category: 'bass' as const,
+      pattern: '', key: 'Am', bpm: 120, bars: 1,
+      mood: { energy: 0.5, brightness: 0.5 }, density: 0.5,
+      tags: [], source: 'preset' as const, createdAt: new Date(),
+    }
+    const incompat = {
+      id: '3', name: 'Incompat', category: 'bass' as const,
+      pattern: '', key: 'F#', bpm: 75, bars: 1,
+      mood: { energy: 0.5, brightness: 0.5 }, density: 0.5,
+      tags: [], source: 'preset' as const, createdAt: new Date(),
+    }
+    useLibraryStore.getState().loadBlocks([ref, compat, incompat])
+    const results = useLibraryStore.getState().findCompatible('1')
+    expect(results[0].id).toBe('2')
+    expect(results.find(r => r.id === '1')).toBeUndefined()
+  })
+
   it('returns all blocks for empty search', () => {
     const block = {
       id: '1', name: 'Test', category: 'beats' as const,

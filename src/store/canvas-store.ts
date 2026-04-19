@@ -8,6 +8,7 @@ interface CanvasStoreState {
   placedBlocks: PlacedBlock[]
   viewport: { x: number; y: number; zoom: number }
   soloId: string | null
+  selectedBlockId: string | null
 
   addBlock: (blockId: string, position: { x: number; y: number }) => void
   removeBlock: (placedId: string) => void
@@ -17,6 +18,7 @@ interface CanvasStoreState {
   setVolume: (placedId: string, volume: number) => void
   setMasterBpm: (bpm: number) => void
   setViewport: (viewport: { x: number; y: number; zoom: number }) => void
+  selectBlock: (placedId: string | null) => void
 }
 
 export const useCanvasStore = create<CanvasStoreState>((set) => ({
@@ -25,6 +27,7 @@ export const useCanvasStore = create<CanvasStoreState>((set) => ({
   placedBlocks: [],
   viewport: { x: 0, y: 0, zoom: 1 },
   soloId: null,
+  selectedBlockId: null,
 
   addBlock: (blockId, position) => set((state) => ({
     placedBlocks: [...state.placedBlocks, createPlacedBlock(blockId, position)],
@@ -59,4 +62,6 @@ export const useCanvasStore = create<CanvasStoreState>((set) => ({
   setMasterBpm: (bpm) => set({ masterBpm: bpm }),
 
   setViewport: (viewport) => set({ viewport }),
+
+  selectBlock: (placedId) => set({ selectedBlockId: placedId }),
 }))

@@ -19,13 +19,28 @@ const TABS: { label: string; value: BlockCategory | 'all' }[] = [
 export function LibraryPanel() {
   const [activeTab, setActiveTab] = useState<BlockCategory | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
-  const { blocks, getBlocksByCategory, searchBlocks, getBlockById } = useLibraryStore()
-  const { placedBlocks } = useCanvasStore()
+  const { blocks, getBlocksByCategory, searchBlocks, getBlockById, findCompatible } = useLibraryStore()
+  const { placedBlocks, selectedBlockId, selectBlock } = useCanvasStore()
   const { preview, previewingId } = usePreview()
 
-  const displayedBlocks = searchQuery
-    ? searchBlocks(searchQuery)
-    : (activeTab === 'all' ? blocks : getBlocksByCategory(activeTab))
+  // Get the selected block's source block ID for "sounds like" filtering
+  const selectedPlaced = selectedBlockId
+    ? placedBlocks.find((pb) => pb.id === selectedBlockId)
+    : null
+  const selectedBlock = selectedPlaced
+    ? getBlockById(selectedPlaced.blockId)
+    : null
+
+  // Determine displayed blocks
+  const displayedBlocks = useMemo(() => {
+    if (selectedBlock) {
+      return findCompatible(selectedBlock.id)
+    }
+    if (searchQuery) {
+      return searchBlocks(searchQuery)
+    }
+    return activeTab === 'all' ? blocks : getBlocksByCategory(activeTab)
+  }, [selectedBlock, searchQuery, activeTab, blocks, findCompatible, searchBlocks, getBlocksByCategory])
 
   // Compute dominant key/BPM from canvas blocks for compatibility hints
   const canvasContext = useMemo(() => {
@@ -40,23 +55,36 @@ export function LibraryPanel() {
 
   return (
     <div className="library-panel">
-      <div className="library-search">
-        <input
-          type="text"
-          placeholder="Search blocks..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="library-search-input"
-        />
-      </div>
+      {selectedBlock ? (
+        <div className="library-sounds-like">
+          <span>Sounds like: <strong>{selectedBlock.name}</strong></span>
+          <button
+            className="library-sounds-like-clear"
+            onClick={() => selectBlock(null)}
+          >
+            Clear
+          </button>
+        </div>
+      ) : (
+        <div className="library-search">
+          <input
+            type="text"
+            placeholder="Search blocks..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="library-search-input"
+          />
+        </div>
+      )}
       <div className="library-tabs">
         {TABS.map((tab) => (
           <button
             key={tab.value}
-            className={`library-tab ${activeTab === tab.value && !searchQuery ? 'active' : ''}`}
+            className={`library-tab ${activeTab === tab.value && !searchQuery && !selectedBlock ? 'active' : ''}`}
             onClick={() => {
               setActiveTab(tab.value)
               setSearchQuery('')
+              selectBlock(null)
             }}
           >
             {tab.label}

@@ -11,6 +11,30 @@
   z-index: 100;
 }
 
+.library-sounds-like {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #2a2a4e;
+  color: #4ECDC4;
+  font-size: 13px;
+}
+
+.library-sounds-like-clear {
+  background: none;
+  border: 1px solid #4ECDC4;
+  color: #4ECDC4;
+  padding: 2px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.library-sounds-like-clear:hover {
+  background: #4ECDC422;
+}
+
 .library-search {
   padding: 8px 8px 0;
 }

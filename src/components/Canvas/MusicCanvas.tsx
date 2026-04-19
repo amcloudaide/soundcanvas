@@ -8,7 +8,7 @@ import { CanvasBlock } from './CanvasBlock'
 
 export function MusicCanvas() {
   const stageRef = useRef<Konva.Stage>(null)
-  const { placedBlocks, viewport, soloId, moveBlock, toggleMute, toggleSolo, setViewport } = useCanvasStore()
+  const { placedBlocks, viewport, soloId, moveBlock, toggleMute, toggleSolo, setViewport, selectBlock } = useCanvasStore()
   const { getBlockById } = useLibraryStore()
   const { handleTouchMove, handleTouchEnd } = usePinchZoom(stageRef)
 
@@ -41,9 +41,13 @@ export function MusicCanvas() {
     moveBlock(id, { x, y })
   }, [moveBlock])
 
-  const handleDoubleTap = useCallback((_id: string) => {
-    // Will open block detail panel in later phase
-  }, [])
+  const handleDoubleTap = useCallback((placedId: string) => {
+    // Select block → triggers "sounds like this" filter in library
+    const placed = placedBlocks.find((b) => b.id === placedId)
+    if (placed) {
+      selectBlock(placedId)
+    }
+  }, [placedBlocks, selectBlock])
 
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
