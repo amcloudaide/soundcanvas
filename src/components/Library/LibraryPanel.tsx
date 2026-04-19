@@ -3,6 +3,7 @@ import { useLibraryStore } from '../../store/library-store'
 import { useCanvasStore } from '../../store/canvas-store'
 import { usePreview } from '../../audio/usePreview'
 import { LibraryBlockCard } from './LibraryBlockCard'
+import { MoodGrid } from './MoodGrid'
 import type { Block, BlockCategory } from '../../types/block'
 import './LibraryPanel.css'
 
@@ -16,9 +17,12 @@ const TABS: { label: string; value: BlockCategory | 'all' }[] = [
   { label: 'Vocal', value: 'vocal' },
 ]
 
+type ViewMode = 'list' | 'grid'
+
 export function LibraryPanel() {
   const [activeTab, setActiveTab] = useState<BlockCategory | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
+  const [viewMode, setViewMode] = useState<ViewMode>('list')
   const { blocks, getBlocksByCategory, searchBlocks, getBlockById, findCompatible } = useLibraryStore()
   const { placedBlocks, selectedBlockId, selectBlock } = useCanvasStore()
   const { preview, previewingId } = usePreview()
@@ -53,6 +57,10 @@ export function LibraryPanel() {
     return { key: keyBlock.key, bpm: keyBlock.bpm }
   }, [placedBlocks, getBlockById])
 
+  const handleMoodGridSelect = (block: Block) => {
+    preview(block.id, block.pattern)
+  }
+
   return (
     <div className="library-panel">
       {selectedBlock ? (
@@ -66,47 +74,64 @@ export function LibraryPanel() {
           </button>
         </div>
       ) : (
-        <div className="library-search">
-          <input
-            type="text"
-            placeholder="Search blocks..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="library-search-input"
-          />
+        <div className="library-header">
+          <div className="library-search">
+            <input
+              type="text"
+              placeholder="Search blocks..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="library-search-input"
+            />
+          </div>
+          <button
+            className="library-view-toggle"
+            onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
+            aria-label={viewMode === 'list' ? 'Mood grid view' : 'List view'}
+            title={viewMode === 'list' ? 'Mood grid' : 'List view'}
+          >
+            {viewMode === 'list' ? '◉' : '☰'}
+          </button>
         </div>
       )}
-      <div className="library-tabs">
-        {TABS.map((tab) => (
-          <button
-            key={tab.value}
-            className={`library-tab ${activeTab === tab.value && !searchQuery && !selectedBlock ? 'active' : ''}`}
-            onClick={() => {
-              setActiveTab(tab.value)
-              setSearchQuery('')
-              selectBlock(null)
-            }}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-      <div className="library-blocks">
-        {displayedBlocks.map((block) => (
-          <LibraryBlockCard
-            key={block.id}
-            block={block}
-            canvasContext={canvasContext}
-            isPreviewing={previewingId === block.id}
-            onPreview={() => preview(block.id, block.pattern)}
-          />
-        ))}
-        {displayedBlocks.length === 0 && (
-          <div className="library-empty">
-            {searchQuery ? `No blocks matching "${searchQuery}"` : 'No blocks in this category'}
+      {viewMode === 'list' && (
+        <>
+          <div className="library-tabs">
+            {TABS.map((tab) => (
+              <button
+                key={tab.value}
+                className={`library-tab ${activeTab === tab.value && !searchQuery && !selectedBlock ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab(tab.value)
+                  setSearchQuery('')
+                  selectBlock(null)
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
-        )}
-      </div>
+          <div className="library-blocks">
+            {displayedBlocks.map((block) => (
+              <LibraryBlockCard
+                key={block.id}
+                block={block}
+                canvasContext={canvasContext}
+                isPreviewing={previewingId === block.id}
+                onPreview={() => preview(block.id, block.pattern)}
+              />
+            ))}
+            {displayedBlocks.length === 0 && (
+              <div className="library-empty">
+                {searchQuery ? `No blocks matching "${searchQuery}"` : 'No blocks in this category'}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+      {viewMode === 'grid' && (
+        <MoodGrid onSelectBlock={handleMoodGridSelect} />
+      )}
     </div>
   )
 }

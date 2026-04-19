@@ -1,0 +1,77 @@
+.mood-grid {
+  padding: 10px;
+}
+
+.mood-grid-area {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4e 100%);
+  border: 1px solid #444;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mood-dot {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transform: translate(-50%, 50%);
+  transition: transform 0.15s, box-shadow 0.15s;
+  padding: 0;
+}
+
+.mood-dot:hover {
+  transform: translate(-50%, 50%) scale(1.6);
+  z-index: 10;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+.mood-tooltip {
+  position: absolute;
+  transform: translateX(-50%);
+  background: #000c;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.mood-label {
+  position: absolute;
+  font-size: 9px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  pointer-events: none;
+}
+
+.mood-label.left {
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.mood-label.right {
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.mood-label.bottom {
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.mood-label.top {
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
