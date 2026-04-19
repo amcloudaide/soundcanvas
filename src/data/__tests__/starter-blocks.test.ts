@@ -2,8 +2,24 @@ import { describe, it, expect } from 'vitest'
 import { starterBlocks } from '../starter-blocks'
 
 describe('starterBlocks', () => {
-  it('has at least 20 blocks', () => {
-    expect(starterBlocks.length).toBeGreaterThanOrEqual(20)
+  it('has at least 50 blocks', () => {
+    expect(starterBlocks.length).toBeGreaterThanOrEqual(50)
+  })
+
+  it('has unique block names', () => {
+    const names = starterBlocks.map((b) => b.name)
+    expect(new Set(names).size).toBe(names.length)
+  })
+
+  it('covers a range of keys across circle of fifths', () => {
+    const keys = new Set(starterBlocks.map((b) => b.key))
+    expect(keys.size).toBeGreaterThanOrEqual(6)
+  })
+
+  it('covers a range of BPMs', () => {
+    const bpms = starterBlocks.map((b) => b.bpm)
+    expect(Math.min(...bpms)).toBeLessThanOrEqual(80)
+    expect(Math.max(...bpms)).toBeGreaterThanOrEqual(140)
   })
 
   it('covers all categories', () => {
