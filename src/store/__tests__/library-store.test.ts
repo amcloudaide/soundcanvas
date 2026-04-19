@@ -117,6 +117,27 @@ describe('libraryStore', () => {
     expect(results.find(r => r.id === '1')).toBeUndefined()
   })
 
+  it('finds blocks by analysis result', () => {
+    const cBlock = {
+      id: '1', name: 'C Block', category: 'melody' as const,
+      pattern: '', key: 'C', bpm: 120, bars: 1,
+      mood: { energy: 0.5, brightness: 0.7 }, density: 0.5,
+      tags: [], source: 'preset' as const, createdAt: new Date(),
+    }
+    const fSharpBlock = {
+      id: '2', name: 'F# Block', category: 'melody' as const,
+      pattern: '', key: 'F#', bpm: 75, bars: 1,
+      mood: { energy: 0.9, brightness: 0.1 }, density: 0.5,
+      tags: [], source: 'preset' as const, createdAt: new Date(),
+    }
+    useLibraryStore.getState().loadBlocks([cBlock, fSharpBlock])
+    const results = useLibraryStore.getState().findByAnalysis({
+      key: 'C', bpm: 120, mood: { energy: 0.5, brightness: 0.7 },
+    })
+    // C block should rank higher (same key, BPM, similar mood)
+    expect(results[0].id).toBe('1')
+  })
+
   it('returns all blocks for empty search', () => {
     const block = {
       id: '1', name: 'Test', category: 'beats' as const,

@@ -10,6 +10,7 @@ interface LibraryState {
   getBlockById: (id: string) => Block | undefined
   searchBlocks: (query: string) => Block[]
   findCompatible: (blockId: string) => Block[]
+  findByAnalysis: (analysis: { key: string; bpm: number; mood: { energy: number; brightness: number } }) => Block[]
 }
 
 export const useLibraryStore = create<LibraryState>((set, get) => ({
@@ -39,6 +40,27 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
         compat: getCompatibility({ key: ref.key, bpm: ref.bpm }, { key: b.key, bpm: b.bpm }),
       }))
       .sort((a, b) => b.compat.score - a.compat.score)
+      .map((item) => item.block)
+  },
+
+  findByAnalysis: (analysis) => {
+    return get().blocks
+      .map((b) => {
+        const keyCompat = getCompatibility(
+          { key: analysis.key, bpm: analysis.bpm },
+          { key: b.key, bpm: b.bpm }
+        )
+        // Mood similarity: Euclidean distance in 2D mood space
+        const moodDist = Math.sqrt(
+          Math.pow(analysis.mood.energy - b.mood.energy, 2) +
+          Math.pow(analysis.mood.brightness - b.mood.brightness, 2)
+        )
+        const moodScore = Math.max(0, 1 - moodDist)
+        // Combined: key/BPM compatibility weighted 60%, mood 40%
+        const score = keyCompat.score * 0.6 + moodScore * 0.4
+        return { block: b, score }
+      })
+      .sort((a, b) => b.score - a.score)
       .map((item) => item.block)
   },
 

@@ -5,6 +5,7 @@ import { usePreview } from '../../audio/usePreview'
 import { LibraryBlockCard } from './LibraryBlockCard'
 import { MoodGrid } from './MoodGrid'
 import { CreateBlockDialog } from './CreateBlockDialog'
+import { ListenDialog } from './ListenDialog'
 import type { Block, BlockCategory } from '../../types/block'
 import './LibraryPanel.css'
 
@@ -25,6 +26,7 @@ export function LibraryPanel() {
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [showCreateDialog, setShowCreateDialog] = useState(false)
+  const [showListenDialog, setShowListenDialog] = useState(false)
   const { blocks, getBlocksByCategory, searchBlocks, getBlockById, findCompatible } = useLibraryStore()
   const { placedBlocks, selectedBlockId, selectBlock } = useCanvasStore()
   const { preview, previewingId } = usePreview()
@@ -95,6 +97,14 @@ export function LibraryPanel() {
             {viewMode === 'list' ? '◉' : '☰'}
           </button>
           <button
+            className="library-listen-btn"
+            onClick={() => setShowListenDialog(true)}
+            aria-label="Listen and analyze"
+            title="Listen & Analyze"
+          >
+            🎙
+          </button>
+          <button
             className="library-create-btn"
             onClick={() => setShowCreateDialog(true)}
             aria-label="Create with AI"
@@ -106,6 +116,9 @@ export function LibraryPanel() {
       )}
       {showCreateDialog && (
         <CreateBlockDialog onClose={() => setShowCreateDialog(false)} />
+      )}
+      {showListenDialog && (
+        <ListenDialog onClose={() => setShowListenDialog(false)} />
       )}
       {viewMode === 'list' && (
         <>

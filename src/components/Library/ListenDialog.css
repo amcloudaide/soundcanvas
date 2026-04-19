@@ -1,0 +1,146 @@
+.listen-dialog {
+  max-width: 380px;
+}
+
+.listen-ready {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.listen-hint {
+  color: #888;
+  font-size: 13px;
+  text-align: center;
+}
+
+.listen-mic-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid #4ECDC4;
+  background: #4ECDC422;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, background 0.15s;
+}
+
+.listen-mic-btn:hover {
+  transform: scale(1.05);
+  background: #4ECDC444;
+}
+
+.listen-mic-icon {
+  font-size: 32px;
+}
+
+.listen-active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 0;
+  color: #4ECDC4;
+}
+
+.listen-pulse {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #4ECDC4;
+  animation: listen-pulse-anim 1.2s ease-in-out infinite;
+}
+
+@keyframes listen-pulse-anim {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.3); opacity: 1; }
+}
+
+.listen-results {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.listen-analysis h4,
+.listen-matches h4 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.listen-analysis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.listen-stat {
+  background: #2a2a3e;
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.listen-stat-label {
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.listen-stat-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4ECDC4;
+}
+
+.listen-match-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.listen-match-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: #2a2a3e;
+  border: 1px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #ccc;
+  text-align: left;
+}
+
+.listen-match-item:hover,
+.listen-match-item.active {
+  border-color: #4ECDC4;
+  color: #fff;
+}
+
+.listen-match-name {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.listen-match-meta {
+  font-size: 11px;
+  color: #888;
+}
+
+.listen-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 4px;
+}
