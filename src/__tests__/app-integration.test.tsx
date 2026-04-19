@@ -67,4 +67,9 @@ describe('App Integration', () => {
     render(<App />)
     expect(screen.getByRole('button', { name: /listen and analyze/i })).toBeInTheDocument()
   })
+
+  it('renders the Save/Load button in transport', () => {
+    render(<App />)
+    expect(screen.getByRole('button', { name: /save and load/i })).toBeInTheDocument()
+  })
 })
