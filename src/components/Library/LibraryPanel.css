@@ -179,3 +179,21 @@
   padding: 20px;
   grid-column: 1 / -1;
 }
+
+/* Responsive: mobile */
+@media (max-width: 480px) {
+  .library-panel {
+    max-height: 50vh;
+  }
+
+  .library-blocks {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .library-header {
+    gap: 4px;
+    padding-right: 6px;
+  }
+}
