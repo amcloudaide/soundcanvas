@@ -19,9 +19,11 @@ const COMPAT_COLORS = {
 interface LibraryBlockCardProps {
   block: Block
   canvasContext: { key: string; bpm: number } | null
+  isPreviewing: boolean
+  onPreview: () => void
 }
 
-export function LibraryBlockCard({ block, canvasContext }: LibraryBlockCardProps) {
+export function LibraryBlockCard({ block, canvasContext, isPreviewing, onPreview }: LibraryBlockCardProps) {
   const color = CATEGORY_COLORS[block.category] ?? '#999'
 
   const compatibility = canvasContext
@@ -39,9 +41,10 @@ export function LibraryBlockCard({ block, canvasContext }: LibraryBlockCardProps
 
   return (
     <div
-      className="library-block-card"
+      className={`library-block-card ${isPreviewing ? 'previewing' : ''}`}
       draggable
       onDragStart={handleDragStart}
+      onClick={onPreview}
       style={{
         background: color,
         borderRadius: '8px',
@@ -52,7 +55,10 @@ export function LibraryBlockCard({ block, canvasContext }: LibraryBlockCardProps
         borderLeft: compatibility ? `4px solid ${borderLeftColor}` : 'none',
       }}
     >
-      <div style={{ fontWeight: 'bold', fontSize: '13px' }}>{block.name}</div>
+      <div style={{ fontWeight: 'bold', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+        {isPreviewing && <span style={{ fontSize: '10px' }}>&#9654;</span>}
+        {block.name}
+      </div>
       <div style={{ fontSize: '10px', opacity: 0.8, marginTop: '4px' }}>
         {block.key} | {block.bpm} BPM | {block.tags.slice(0, 2).join(', ')}
       </div>

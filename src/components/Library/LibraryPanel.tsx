@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useLibraryStore } from '../../store/library-store'
 import { useCanvasStore } from '../../store/canvas-store'
+import { usePreview } from '../../audio/usePreview'
 import { LibraryBlockCard } from './LibraryBlockCard'
 import type { Block, BlockCategory } from '../../types/block'
 import './LibraryPanel.css'
@@ -20,6 +21,7 @@ export function LibraryPanel() {
   const [searchQuery, setSearchQuery] = useState('')
   const { blocks, getBlocksByCategory, searchBlocks, getBlockById } = useLibraryStore()
   const { placedBlocks } = useCanvasStore()
+  const { preview, previewingId } = usePreview()
 
   const displayedBlocks = searchQuery
     ? searchBlocks(searchQuery)
@@ -32,7 +34,6 @@ export function LibraryPanel() {
       .map((pb) => getBlockById(pb.blockId))
       .filter(Boolean) as Block[]
     if (canvasBlocks.length === 0) return null
-    // Use the most recent non-chromatic block's key, or fallback to last block
     const keyBlock = [...canvasBlocks].reverse().find((b) => b.key !== 'chromatic') || canvasBlocks[canvasBlocks.length - 1]
     return { key: keyBlock.key, bpm: keyBlock.bpm }
   }, [placedBlocks, getBlockById])
@@ -68,6 +69,8 @@ export function LibraryPanel() {
             key={block.id}
             block={block}
             canvasContext={canvasContext}
+            isPreviewing={previewingId === block.id}
+            onPreview={() => preview(block.id, block.pattern)}
           />
         ))}
         {displayedBlocks.length === 0 && (

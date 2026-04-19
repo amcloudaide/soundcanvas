@@ -1,5 +1,15 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+
+// Mock the audio modules
+vi.mock('../../../audio/usePreview', () => ({
+  usePreview: () => ({
+    preview: vi.fn(),
+    stopPreview: vi.fn(),
+    previewingId: null,
+  }),
+}))
+
 import { LibraryPanel } from '../LibraryPanel'
 import { useLibraryStore } from '../../../store/library-store'
 import { starterBlocks } from '../../../data/starter-blocks'
@@ -19,5 +29,10 @@ describe('LibraryPanel', () => {
   it('shows blocks for the default (All) category', () => {
     render(<LibraryPanel />)
     expect(screen.getByText('Four on the Floor')).toBeInTheDocument()
+  })
+
+  it('renders search input', () => {
+    render(<LibraryPanel />)
+    expect(screen.getByPlaceholderText('Search blocks...')).toBeInTheDocument()
   })
 })
