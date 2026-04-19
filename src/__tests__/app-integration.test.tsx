@@ -62,4 +62,9 @@ describe('App Integration', () => {
     render(<App />)
     expect(screen.getByRole('button', { name: /create with ai/i })).toBeInTheDocument()
   })
+
+  it('renders the Listen button in library', () => {
+    render(<App />)
+    expect(screen.getByRole('button', { name: /listen and analyze/i })).toBeInTheDocument()
+  })
 })
