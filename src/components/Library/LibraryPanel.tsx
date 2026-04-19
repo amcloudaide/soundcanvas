@@ -4,6 +4,7 @@ import { useCanvasStore } from '../../store/canvas-store'
 import { usePreview } from '../../audio/usePreview'
 import { LibraryBlockCard } from './LibraryBlockCard'
 import { MoodGrid } from './MoodGrid'
+import { CreateBlockDialog } from './CreateBlockDialog'
 import type { Block, BlockCategory } from '../../types/block'
 import './LibraryPanel.css'
 
@@ -23,6 +24,7 @@ export function LibraryPanel() {
   const [activeTab, setActiveTab] = useState<BlockCategory | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [showCreateDialog, setShowCreateDialog] = useState(false)
   const { blocks, getBlocksByCategory, searchBlocks, getBlockById, findCompatible } = useLibraryStore()
   const { placedBlocks, selectedBlockId, selectBlock } = useCanvasStore()
   const { preview, previewingId } = usePreview()
@@ -92,7 +94,18 @@ export function LibraryPanel() {
           >
             {viewMode === 'list' ? '◉' : '☰'}
           </button>
+          <button
+            className="library-create-btn"
+            onClick={() => setShowCreateDialog(true)}
+            aria-label="Create with AI"
+            title="Create with AI"
+          >
+            +
+          </button>
         </div>
+      )}
+      {showCreateDialog && (
+        <CreateBlockDialog onClose={() => setShowCreateDialog(false)} />
       )}
       {viewMode === 'list' && (
         <>

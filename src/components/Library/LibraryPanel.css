@@ -63,6 +63,27 @@
   border-color: #4ECDC4;
 }
 
+.library-create-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #4ECDC4;
+  border-radius: 6px;
+  background: #4ECDC422;
+  color: #4ECDC4;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.library-create-btn:hover {
+  background: #4ECDC444;
+}
+
 .library-search {
   padding: 8px 8px 0;
   flex: 1;
