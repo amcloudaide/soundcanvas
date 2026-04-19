@@ -1,0 +1,52 @@
+.library-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #1a1a2e;
+  border-top: 2px solid #333;
+  max-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.library-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 8px 8px 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.library-tab {
+  padding: 6px 14px;
+  border: none;
+  background: #2a2a3e;
+  color: #aaa;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.library-tab.active {
+  background: #3a3a5e;
+  color: #fff;
+}
+
+.library-blocks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  padding: 10px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.library-empty {
+  color: #666;
+  text-align: center;
+  padding: 20px;
+  grid-column: 1 / -1;
+}

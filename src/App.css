@@ -1,0 +1,15 @@
+.app {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #0f0f23;
+  position: relative;
+}
+
+.canvas-area {
+  position: absolute;
+  top: 48px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
