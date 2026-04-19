@@ -14,6 +14,7 @@ export class AudioEngine {
   private bpm = 120
   private playing = false
   private patterns = new Map<string, { code: string; muted: boolean; volume: number }>()
+  private updateTimer: ReturnType<typeof setTimeout> | null = null
 
   /**
    * Initialize Strudel on first user gesture.
@@ -63,37 +64,43 @@ export class AudioEngine {
   }
 
   addPattern(id: string, code: string): void {
-    this.patterns.set(id, { code, muted: false, volume: 0.8 })
-    if (this.playing) {
-      this.updatePattern()
-    }
+    const existing = this.patterns.get(id)
+    if (existing && existing.code === code) return // no change
+    this.patterns.set(id, { code, muted: existing?.muted ?? false, volume: existing?.volume ?? 0.8 })
+    this.scheduleUpdate()
   }
 
   removePattern(id: string): void {
     this.patterns.delete(id)
-    if (this.playing) {
-      this.updatePattern()
-    }
+    this.scheduleUpdate()
   }
 
   mutePattern(id: string, muted: boolean): void {
     const p = this.patterns.get(id)
-    if (p) {
+    if (p && p.muted !== muted) {
       p.muted = muted
-      if (this.playing) {
-        this.updatePattern()
-      }
+      this.scheduleUpdate()
     }
   }
 
   setPatternVolume(id: string, volume: number): void {
     const p = this.patterns.get(id)
-    if (p) {
+    if (p && p.volume !== volume) {
       p.volume = volume
-      if (this.playing) {
-        this.updatePattern()
-      }
+      this.scheduleUpdate()
     }
+  }
+
+  /**
+   * Debounce updatePattern to batch rapid changes (e.g. multiple blocks added in one effect)
+   */
+  private scheduleUpdate(): void {
+    if (!this.playing) return
+    if (this.updateTimer) clearTimeout(this.updateTimer)
+    this.updateTimer = setTimeout(() => {
+      this.updateTimer = null
+      this.updatePattern()
+    }, 50)
   }
 
   getActivePatterns(): string[] {
@@ -127,9 +134,11 @@ export class AudioEngine {
       : `stack(${activePatterns.join(', ')})`
 
     try {
+      console.log('[AudioEngine] evaluating:', combinedCode.slice(0, 200))
       await this.repl.evaluate(combinedCode, true)
       // Set BPM after evaluation
       this.repl.scheduler.setCps(this.bpm / 60 / 4)
+      console.log('[AudioEngine] playing', activePatterns.length, 'patterns at', this.bpm, 'BPM')
     } catch (err) {
       console.error('[AudioEngine] pattern evaluation error:', err)
     }

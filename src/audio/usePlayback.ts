@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState, useRef } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { audioEngine } from './engine'
 import { useCanvasStore } from '../store/canvas-store'
 import { useLibraryStore } from '../store/library-store'
@@ -7,32 +7,31 @@ export function usePlayback() {
   const [isPlaying, setIsPlaying] = useState(false)
   const { masterBpm, placedBlocks, soloId } = useCanvasStore()
   const { getBlockById } = useLibraryStore()
-  const prevBlockIdsRef = useRef<Set<string>>(new Set())
-
   // Sync BPM
   useEffect(() => {
     audioEngine.setBpm(masterBpm)
   }, [masterBpm])
 
   // Sync placed blocks with audio engine
+  // Re-run when blocks change, solo changes, OR playback state changes
   useEffect(() => {
     const currentIds = new Set(placedBlocks.map((b) => b.id))
-    const prevIds = prevBlockIdsRef.current
+    const enginePatterns = new Set(audioEngine.getActivePatterns())
 
     // Remove patterns that are no longer on canvas
-    for (const id of prevIds) {
+    for (const id of enginePatterns) {
       if (!currentIds.has(id)) {
         audioEngine.removePattern(id)
       }
     }
 
-    // Add new patterns / update existing
+    // Add/update patterns for all placed blocks
     for (const placed of placedBlocks) {
       const block = getBlockById(placed.blockId)
       if (!block) continue
 
-      if (!prevIds.has(placed.id)) {
-        // New block on canvas — register its pattern
+      // Always register pattern (addPattern is idempotent if same code)
+      if (!enginePatterns.has(placed.id)) {
         audioEngine.addPattern(placed.id, block.pattern)
       }
 
@@ -44,9 +43,7 @@ export function usePlayback() {
       audioEngine.mutePattern(placed.id, effectiveMute)
       audioEngine.setPatternVolume(placed.id, placed.volume)
     }
-
-    prevBlockIdsRef.current = currentIds
-  }, [placedBlocks, soloId, getBlockById])
+  }, [placedBlocks, soloId, getBlockById, isPlaying])
 
   const togglePlayback = useCallback(async () => {
     if (isPlaying) {
