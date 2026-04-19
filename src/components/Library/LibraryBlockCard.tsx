@@ -1,4 +1,5 @@
 import type { Block } from '../../types/block'
+import { getCompatibility } from '../../utils/compatibility'
 
 const CATEGORY_COLORS: Record<string, string> = {
   beats: '#FF6B6B',
@@ -9,12 +10,27 @@ const CATEGORY_COLORS: Record<string, string> = {
   vocal: '#FFD93D',
 }
 
-interface LibraryBlockCardProps {
-  block: Block
+const COMPAT_COLORS = {
+  green: '#4CAF50',
+  yellow: '#FFC107',
+  red: '#F44336',
 }
 
-export function LibraryBlockCard({ block }: LibraryBlockCardProps) {
+interface LibraryBlockCardProps {
+  block: Block
+  canvasContext: { key: string; bpm: number } | null
+}
+
+export function LibraryBlockCard({ block, canvasContext }: LibraryBlockCardProps) {
   const color = CATEGORY_COLORS[block.category] ?? '#999'
+
+  const compatibility = canvasContext
+    ? getCompatibility(canvasContext, { key: block.key, bpm: block.bpm })
+    : null
+
+  const borderLeftColor = compatibility
+    ? COMPAT_COLORS[compatibility.level]
+    : 'transparent'
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData('blockId', block.id)
@@ -33,6 +49,7 @@ export function LibraryBlockCard({ block }: LibraryBlockCardProps) {
         cursor: 'grab',
         color: '#fff',
         userSelect: 'none',
+        borderLeft: compatibility ? `4px solid ${borderLeftColor}` : 'none',
       }}
     >
       <div style={{ fontWeight: 'bold', fontSize: '13px' }}>{block.name}</div>

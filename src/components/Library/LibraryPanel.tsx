@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useLibraryStore } from '../../store/library-store'
+import { useCanvasStore } from '../../store/canvas-store'
 import { LibraryBlockCard } from './LibraryBlockCard'
-import type { BlockCategory } from '../../types/block'
+import type { Block, BlockCategory } from '../../types/block'
 import './LibraryPanel.css'
 
 const TABS: { label: string; value: BlockCategory | 'all' }[] = [
@@ -17,11 +18,24 @@ const TABS: { label: string; value: BlockCategory | 'all' }[] = [
 export function LibraryPanel() {
   const [activeTab, setActiveTab] = useState<BlockCategory | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
-  const { blocks, getBlocksByCategory, searchBlocks } = useLibraryStore()
+  const { blocks, getBlocksByCategory, searchBlocks, getBlockById } = useLibraryStore()
+  const { placedBlocks } = useCanvasStore()
 
   const displayedBlocks = searchQuery
     ? searchBlocks(searchQuery)
     : (activeTab === 'all' ? blocks : getBlocksByCategory(activeTab))
+
+  // Compute dominant key/BPM from canvas blocks for compatibility hints
+  const canvasContext = useMemo(() => {
+    if (placedBlocks.length === 0) return null
+    const canvasBlocks = placedBlocks
+      .map((pb) => getBlockById(pb.blockId))
+      .filter(Boolean) as Block[]
+    if (canvasBlocks.length === 0) return null
+    // Use the most recent non-chromatic block's key, or fallback to last block
+    const keyBlock = [...canvasBlocks].reverse().find((b) => b.key !== 'chromatic') || canvasBlocks[canvasBlocks.length - 1]
+    return { key: keyBlock.key, bpm: keyBlock.bpm }
+  }, [placedBlocks, getBlockById])
 
   return (
     <div className="library-panel">
@@ -50,7 +64,11 @@ export function LibraryPanel() {
       </div>
       <div className="library-blocks">
         {displayedBlocks.map((block) => (
-          <LibraryBlockCard key={block.id} block={block} />
+          <LibraryBlockCard
+            key={block.id}
+            block={block}
+            canvasContext={canvasContext}
+          />
         ))}
         {displayedBlocks.length === 0 && (
           <div className="library-empty">
