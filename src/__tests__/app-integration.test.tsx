@@ -57,4 +57,9 @@ describe('App Integration', () => {
     render(<App />)
     expect(screen.getByRole('button', { name: /mood grid/i })).toBeInTheDocument()
   })
+
+  it('renders the AI Create button in library', () => {
+    render(<App />)
+    expect(screen.getByRole('button', { name: /create with ai/i })).toBeInTheDocument()
+  })
 })
