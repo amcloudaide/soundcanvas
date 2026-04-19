@@ -6,7 +6,11 @@
       "Bash(npm view:*)",
       "mcp__Claude_Preview__preview_start",
       "Bash(rm src/assets/hero.png src/assets/react.svg src/assets/vite.svg)",
-      "Bash(rm public/favicon.svg public/icons.svg)"
+      "Bash(rm public/favicon.svg public/icons.svg)",
+      "WebSearch",
+      "WebFetch(domain:strudel.cc)",
+      "Bash(gh pr create --base phase-1-base --head main --title 'Phase 1: Core canvas with visual block library and Strudel audio engine' --body ' *)",
+      "Bash(gh pr *)"
     ]
   }
 }
