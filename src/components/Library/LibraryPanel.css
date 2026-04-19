@@ -11,6 +11,30 @@
   z-index: 100;
 }
 
+.library-search {
+  padding: 8px 8px 0;
+}
+
+.library-search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #2a2a3e;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.library-search-input:focus {
+  border-color: #4ECDC4;
+}
+
+.library-search-input::placeholder {
+  color: #666;
+}
+
 .library-tabs {
   display: flex;
   gap: 2px;

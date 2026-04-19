@@ -7,6 +7,7 @@ interface LibraryState {
   addBlock: (block: Block) => void
   getBlocksByCategory: (category: BlockCategory) => Block[]
   getBlockById: (id: string) => Block | undefined
+  searchBlocks: (query: string) => Block[]
 }
 
 export const useLibraryStore = create<LibraryState>((set, get) => ({
@@ -24,5 +25,17 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
 
   getBlockById: (id) => {
     return get().blocks.find((b) => b.id === id)
+  },
+
+  searchBlocks: (query) => {
+    const q = query.toLowerCase().trim()
+    if (!q) return get().blocks
+    return get().blocks.filter((b) =>
+      b.name.toLowerCase().includes(q) ||
+      b.tags.some((t) => t.toLowerCase().includes(q)) ||
+      b.key.toLowerCase().includes(q) ||
+      b.category.includes(q) ||
+      String(b.bpm).includes(q)
+    )
   },
 }))

@@ -16,18 +16,33 @@ const TABS: { label: string; value: BlockCategory | 'all' }[] = [
 
 export function LibraryPanel() {
   const [activeTab, setActiveTab] = useState<BlockCategory | 'all'>('all')
-  const { blocks, getBlocksByCategory } = useLibraryStore()
+  const [searchQuery, setSearchQuery] = useState('')
+  const { blocks, getBlocksByCategory, searchBlocks } = useLibraryStore()
 
-  const displayedBlocks = activeTab === 'all' ? blocks : getBlocksByCategory(activeTab)
+  const displayedBlocks = searchQuery
+    ? searchBlocks(searchQuery)
+    : (activeTab === 'all' ? blocks : getBlocksByCategory(activeTab))
 
   return (
     <div className="library-panel">
+      <div className="library-search">
+        <input
+          type="text"
+          placeholder="Search blocks..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="library-search-input"
+        />
+      </div>
       <div className="library-tabs">
         {TABS.map((tab) => (
           <button
             key={tab.value}
-            className={`library-tab ${activeTab === tab.value ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.value)}
+            className={`library-tab ${activeTab === tab.value && !searchQuery ? 'active' : ''}`}
+            onClick={() => {
+              setActiveTab(tab.value)
+              setSearchQuery('')
+            }}
           >
             {tab.label}
           </button>
@@ -38,7 +53,9 @@ export function LibraryPanel() {
           <LibraryBlockCard key={block.id} block={block} />
         ))}
         {displayedBlocks.length === 0 && (
-          <div className="library-empty">No blocks in this category</div>
+          <div className="library-empty">
+            {searchQuery ? `No blocks matching "${searchQuery}"` : 'No blocks in this category'}
+          </div>
         )}
       </div>
     </div>
