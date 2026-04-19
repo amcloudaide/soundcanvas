@@ -1,13 +1,15 @@
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useState } from 'react'
 import { Stage, Layer } from 'react-konva'
 import type Konva from 'konva'
 import { useCanvasStore } from '../../store/canvas-store'
 import { useLibraryStore } from '../../store/library-store'
 import { usePinchZoom } from '../../hooks/usePinchZoom'
 import { CanvasBlock } from './CanvasBlock'
+import { VariationDialog } from './VariationDialog'
 
 export function MusicCanvas() {
   const stageRef = useRef<Konva.Stage>(null)
+  const [varyPattern, setVaryPattern] = useState<string | null>(null)
   const { placedBlocks, viewport, soloId, moveBlock, toggleMute, toggleSolo, setViewport, selectBlock } = useCanvasStore()
   const { getBlockById } = useLibraryStore()
   const { handleTouchMove, handleTouchEnd } = usePinchZoom(stageRef)
@@ -48,6 +50,10 @@ export function MusicCanvas() {
       selectBlock(placedId)
     }
   }, [placedBlocks, selectBlock])
+
+  const handleVary = useCallback((_blockId: string, pattern: string) => {
+    setVaryPattern(pattern)
+  }, [])
 
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
@@ -114,11 +120,18 @@ export function MusicCanvas() {
                 onDoubleTap={handleDoubleTap}
                 onToggleMute={toggleMute}
                 onToggleSolo={toggleSolo}
+                onVary={handleVary}
               />
             )
           })}
         </Layer>
       </Stage>
+      {varyPattern && (
+        <VariationDialog
+          sourcePattern={varyPattern}
+          onClose={() => setVaryPattern(null)}
+        />
+      )}
     </div>
   )
 }

@@ -22,9 +22,10 @@ interface CanvasBlockProps {
   onDoubleTap: (id: string) => void
   onToggleMute: (id: string) => void
   onToggleSolo: (id: string) => void
+  onVary: (blockId: string, pattern: string) => void
 }
 
-export function CanvasBlock({ placed, block, isSoloed, onDragEnd, onDoubleTap, onToggleMute, onToggleSolo }: CanvasBlockProps) {
+export function CanvasBlock({ placed, block, isSoloed, onDragEnd, onDoubleTap, onToggleMute, onToggleSolo, onVary }: CanvasBlockProps) {
   const color = CATEGORY_COLORS[block.category] ?? '#999'
   const opacity = placed.muted ? 0.4 : 1
 
@@ -121,6 +122,30 @@ export function CanvasBlock({ placed, block, isSoloed, onDragEnd, onDoubleTap, o
           fontSize={10}
           fontStyle="bold"
           fill={isSoloed ? '#000' : '#fff'}
+        />
+      </Group>
+      {/* Vary button */}
+      <Group
+        x={BLOCK_WIDTH - 32}
+        y={BLOCK_HEIGHT - 24}
+        onClick={() => onVary(block.id, block.pattern)}
+        onTap={() => onVary(block.id, block.pattern)}
+      >
+        <Rect
+          width={24}
+          height={18}
+          fill="rgba(78,205,196,0.3)"
+          cornerRadius={4}
+        />
+        <Text
+          text="V"
+          width={24}
+          height={18}
+          align="center"
+          verticalAlign="middle"
+          fontSize={10}
+          fontStyle="bold"
+          fill="#4ECDC4"
         />
       </Group>
     </Group>
