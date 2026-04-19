@@ -1,26 +1,23 @@
 import { describe, it, expect, vi } from 'vitest'
+
+// Mock @strudel/web before importing engine
+vi.mock('@strudel/web', () => ({
+  initStrudel: vi.fn().mockResolvedValue({
+    scheduler: {
+      start: vi.fn(),
+      stop: vi.fn(),
+      setCps: vi.fn(),
+    },
+    evaluate: vi.fn().mockResolvedValue({}),
+    start: vi.fn(),
+    stop: vi.fn(),
+    setPattern: vi.fn().mockResolvedValue({}),
+  }),
+  evaluate: vi.fn().mockResolvedValue({}),
+  hush: vi.fn(),
+}))
+
 import { AudioEngine } from '../engine'
-
-// Mock Web Audio API
-const mockGainNode = {
-  gain: { value: 1, setValueAtTime: vi.fn() },
-  connect: vi.fn(),
-  disconnect: vi.fn(),
-}
-
-const mockAudioContext = {
-  currentTime: 0,
-  destination: {},
-  createGain: vi.fn(() => mockGainNode),
-  resume: vi.fn().mockResolvedValue(undefined),
-  suspend: vi.fn().mockResolvedValue(undefined),
-  close: vi.fn().mockResolvedValue(undefined),
-  state: 'running',
-}
-
-vi.stubGlobal('AudioContext', function(this: any) {
-  Object.assign(this, mockAudioContext)
-})
 
 describe('AudioEngine', () => {
   it('creates an instance', () => {
@@ -57,5 +54,14 @@ describe('AudioEngine', () => {
     expect(engine.getActivePatterns()).toContain('test-id')
     engine.removePattern('test-id')
     expect(engine.getActivePatterns()).not.toContain('test-id')
+  })
+
+  it('tracks mute state', async () => {
+    const engine = new AudioEngine()
+    await engine.start()
+    engine.addPattern('test-id', 's("bd sd")')
+    engine.mutePattern('test-id', true)
+    // Pattern is still tracked, just muted
+    expect(engine.getActivePatterns()).toContain('test-id')
   })
 })
