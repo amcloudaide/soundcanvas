@@ -1,4 +1,4 @@
-import { initStrudel, evaluate, hush } from '@strudel/web'
+import { initStrudel, hush } from '@strudel/web'
 
 type StrudelRepl = {
   scheduler: { start: () => void; stop: () => void; setCps: (cps: number) => void }
@@ -6,6 +6,28 @@ type StrudelRepl = {
   start: () => void
   stop: () => void
   setPattern: (pattern: any, autostart?: boolean) => Promise<any>
+}
+
+// URLs for Strudel's default sample banks (drum machines, mouth sounds, etc.)
+const DIRT_SAMPLES_URL = 'github:tidalcycles/dirt-samples'
+
+/**
+ * Load default drum/sample banks so patterns like s("bd sd hh") work out of the box.
+ * Strudel's window.samples() is made available globally after initStrudel().
+ */
+async function loadDefaultSamples() {
+  // samples() is attached to window by initStrudel's globals
+  const samplesFn = (window as any).samples
+  if (typeof samplesFn !== 'function') {
+    console.warn('[AudioEngine] samples() not available yet')
+    return
+  }
+  try {
+    await samplesFn(DIRT_SAMPLES_URL)
+    console.log('[AudioEngine] default samples loaded')
+  } catch (err) {
+    console.error('[AudioEngine] failed to load samples:', err)
+  }
 }
 
 export class AudioEngine {
@@ -26,7 +48,10 @@ export class AudioEngine {
       await this.initPromise
       return
     }
-    this.initPromise = initStrudel() as Promise<StrudelRepl>
+    // prebake runs after core packages load but before any evaluate() is allowed
+    this.initPromise = initStrudel({
+      prebake: loadDefaultSamples,
+    }) as Promise<StrudelRepl>
     this.repl = await this.initPromise
   }
 
