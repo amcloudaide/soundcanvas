@@ -23,9 +23,10 @@ interface CanvasBlockProps {
   onToggleMute: (id: string) => void
   onToggleSolo: (id: string) => void
   onVary: (blockId: string, pattern: string) => void
+  onRemove: (id: string) => void
 }
 
-export function CanvasBlock({ placed, block, isSoloed, onDragEnd, onDoubleTap, onToggleMute, onToggleSolo, onVary }: CanvasBlockProps) {
+export function CanvasBlock({ placed, block, isSoloed, onDragEnd, onDoubleTap, onToggleMute, onToggleSolo, onVary, onRemove }: CanvasBlockProps) {
   const color = CATEGORY_COLORS[block.category] ?? '#999'
   const opacity = placed.muted ? 0.4 : 1
 
@@ -54,17 +55,20 @@ export function CanvasBlock({ placed, block, isSoloed, onDragEnd, onDoubleTap, o
         stroke={isSoloed ? '#FFD700' : undefined}
         strokeWidth={isSoloed ? 3 : 0}
       />
-      {/* Block name */}
+      {/* Block name — leave room for X button on right */}
       <Text
         text={block.name}
-        width={BLOCK_WIDTH}
+        x={6}
+        width={BLOCK_WIDTH - 32}
         height={BLOCK_HEIGHT * 0.5}
         y={6}
-        align="center"
+        align="left"
         verticalAlign="middle"
-        fontSize={13}
+        fontSize={12}
         fontStyle="bold"
         fill="#fff"
+        ellipsis={true}
+        wrap="none"
       />
       {/* Key + BPM info */}
       <Text
@@ -146,6 +150,36 @@ export function CanvasBlock({ placed, block, isSoloed, onDragEnd, onDoubleTap, o
           fontSize={10}
           fontStyle="bold"
           fill="#4ECDC4"
+        />
+      </Group>
+      {/* Remove (X) button — top-right corner */}
+      <Group
+        x={BLOCK_WIDTH - 24}
+        y={4}
+        onClick={(e) => {
+          e.cancelBubble = true
+          onRemove(placed.id)
+        }}
+        onTap={(e) => {
+          e.cancelBubble = true
+          onRemove(placed.id)
+        }}
+      >
+        <Rect
+          width={20}
+          height={20}
+          fill="rgba(0,0,0,0.4)"
+          cornerRadius={10}
+        />
+        <Text
+          text="×"
+          width={20}
+          height={20}
+          align="center"
+          verticalAlign="middle"
+          fontSize={16}
+          fontStyle="bold"
+          fill="#fff"
         />
       </Group>
     </Group>
