@@ -1,5 +1,5 @@
 export type BlockCategory = 'beats' | 'bass' | 'melody' | 'chords' | 'fx' | 'vocal'
-export type BlockSource = 'preset' | 'ai-generated' | 'listen-inspired'
+export type BlockSource = 'preset' | 'ai-generated' | 'listen-inspired' | 'manual'
 
 export interface Mood {
   energy: number   // 0-1
