@@ -10,7 +10,7 @@ import { VariationDialog } from './VariationDialog'
 export function MusicCanvas() {
   const stageRef = useRef<Konva.Stage>(null)
   const [varyPattern, setVaryPattern] = useState<string | null>(null)
-  const { placedBlocks, viewport, soloId, moveBlock, removeBlock, toggleMute, toggleSolo, setViewport, selectBlock } = useCanvasStore()
+  const { placedBlocks, viewport, soloId, moveBlock, removeBlock, toggleMute, toggleSolo, setVolume, setViewport, selectBlock } = useCanvasStore()
   const { getBlockById } = useLibraryStore()
   const { handleTouchMove, handleTouchEnd } = usePinchZoom(stageRef)
 
@@ -122,6 +122,7 @@ export function MusicCanvas() {
                 onToggleSolo={toggleSolo}
                 onVary={handleVary}
                 onRemove={removeBlock}
+                onVolumeChange={setVolume}
               />
             )
           })}

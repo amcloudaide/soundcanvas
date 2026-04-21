@@ -11,3 +11,4 @@ export const Group = ({ children, ...props }: any) => (
 )
 export const Rect = (props: any) => <div data-testid="rect" data-fill={props.fill} />
 export const Text = ({ text }: any) => <span data-testid="konva-text">{text}</span>
+export const Circle = (_props: any) => <div data-testid="circle" />

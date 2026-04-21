@@ -11,6 +11,7 @@ vi.mock('react-konva', () => ({
   Group: ({ children }: any) => <div>{children}</div>,
   Rect: () => <div />,
   Text: ({ text }: any) => <span>{text}</span>,
+  Circle: () => <div />,
 }))
 
 import { MusicCanvas } from '../MusicCanvas'
