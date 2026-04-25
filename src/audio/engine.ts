@@ -133,6 +133,22 @@ export class AudioEngine {
   }
 
   /**
+   * Retrieve the master AnalyserNode (created lazily by Strudel's `.analyze('master')`).
+   * Returns null until at least one pattern has been evaluated.
+   */
+  getMasterAnalyser(): AnalyserNode | null {
+    // Strudel exposes its analysers via window.getAnalyserById after initStrudel().
+    const getById = (window as any).getAnalyserById
+    if (typeof getById !== 'function') return null
+    try {
+      const node = getById('master')
+      return node ?? null
+    } catch {
+      return null
+    }
+  }
+
+  /**
    * Combine all unmuted patterns into a single stacked pattern
    * and send it to the Strudel scheduler.
    */
@@ -153,10 +169,12 @@ export class AudioEngine {
       return
     }
 
-    // Stack all patterns together
-    const combinedCode = activePatterns.length === 1
+    // Stack all patterns together, then attach to a master analyser so the
+    // <Visualizer /> can read the time-domain data.
+    const stacked = activePatterns.length === 1
       ? activePatterns[0]
       : `stack(${activePatterns.join(', ')})`
+    const combinedCode = `(${stacked}).analyze('master')`
 
     try {
       console.log('[AudioEngine] evaluating:', combinedCode.slice(0, 200))

@@ -5,6 +5,7 @@ import { usePreview } from '../../audio/usePreview'
 import { LibraryBlockCard } from './LibraryBlockCard'
 import { MoodGrid } from './MoodGrid'
 import { CreateBlockDialog } from './CreateBlockDialog'
+import { Visualizer } from '../Visualizer/Visualizer'
 import { ListenDialog } from './ListenDialog'
 import type { Block, BlockCategory } from '../../types/block'
 import './LibraryPanel.css'
@@ -67,6 +68,7 @@ export function LibraryPanel() {
 
   return (
     <div className="library-panel">
+      <Visualizer />
       {selectedBlock ? (
         <div className="library-sounds-like">
           <span>Sounds like: <strong>{selectedBlock.name}</strong></span>
